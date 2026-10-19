@@ -420,12 +420,12 @@
 })();</script>
 
 <body>
-<nav class="dashboard-switch" aria-label="Alternar entre painéis"><span class="nav-label">Navegar entre painéis:</span><a href="index.html">Painel de análise B3</a><a href="brapi-radar-de-ativos-projecoes-e-sinais.html" aria-current="page">Projeções e sinais (25 ativos)</a></nav>
+<nav class="dashboard-switch" aria-label="Alternar entre painéis"><span class="nav-label">Navegar entre painéis:</span><a href="index.html">Painel de análise B3</a><a href="brapi-radar-de-ativos-projecoes-e-sinais.html" aria-current="page">Projeções e sinais (30 ativos)</a></nav>
 <div class="b-app">
   <header class="b-header">
     <div>
       <h1>Radar de ativos</h1>
-      <p class="b-subtitle">Projeção, tendência e sinal para 25 ativos · dados de <span id="stamp">—</span></p>
+      <p class="b-subtitle">Projeção, tendência e sinal para 30 ativos · dados de <span id="stamp">—</span></p>
     </div>
     <select id="picker" aria-label="Escolher ativo"></select>
   </header>
@@ -441,8 +441,7 @@
 
   <div class="two">
     <section class="b-card">
-      <div class="b-label">Fechamento de 90 pregões e projeção de 21 pregões</div>
-      <div class="b-chart"><canvas id="chart"></canvas></div>
+      <div class="b-row" style="justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><div class="b-label">Histórico de preços e projeção</div><select id="chart-mode" class="b-input" aria-label="Tipo de gráfico" style="width:220px"><option value="line">Linha + projeção</option><option value="candle">Candlestick (OHLC)</option><option value="candle-volume">Candlestick + volume</option></select></div><div class="b-chart"><canvas id="chart"></canvas></div>
     </section>
     <section class="b-card">
       <div class="b-label">Leitura do sinal</div>
@@ -450,10 +449,12 @@
     </section>
   </div>
 
+  <section class="b-card" style="margin-bottom:16px"><div class="b-row" style="justify-content:space-between;align-items:center;flex-wrap:wrap"><div><div class="b-label">Sentimento e direção do mercado monitorado</div><p class="b-faint">Amplitude dos ativos carregados, tendência e pressão estimada pelo volume. Não é book de ofertas nem representa todo o mercado.</p></div><span class="pill mid" id="market-direction">Aguardando dados</span></div><div class="b-grid" id="market-pulse" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px"><div class="b-card">Carregue os dados para estimar o sentimento.</div></div><p class="b-faint" style="margin-top:12px">Análise externa: <a href="https://www.tradingview.com/symbols/INDEX-IBOV/" target="_blank" rel="noopener">Ibovespa no TradingView</a> · <a href="https://www.b3.com.br/pt_br/market-data-e-indices/" target="_blank" rel="noopener">B3 — dados e índices</a> · <a href="https://www.infomoney.com.br/mercados/" target="_blank" rel="noopener">InfoMoney — mercados</a> · <a href="https://brapi.dev/docs/acoes/historico" target="_blank" rel="noopener">Documentação de histórico/volume</a></p></section>
+
   <section class="b-card">
-    <div class="b-row" style="justify-content:space-between;flex-wrap:wrap;margin-bottom:10px"><div class="b-label">Todos os ativos</div><div class="b-row" style="flex-wrap:wrap"><input class="b-input" id="asset-filter" placeholder="Filtrar ticker…" aria-label="Filtrar ativos" style="width:180px"><select id="asset-sort" class="b-input" aria-label="Ordenar ativos"><option value="default">Ordem original</option><option value="change">Variação do dia</option><option value="return">Retorno projetado</option><option value="rsi">RSI 14</option><option value="ticker">Ticker A–Z</option></select><button class="b-button" id="export-csv" type="button">Exportar CSV</button></div></div>
+    <div class="b-row" style="justify-content:space-between;flex-wrap:wrap;margin-bottom:10px"><div class="b-label">Todos os ativos</div><div class="b-row" style="flex-wrap:wrap"><input class="b-input" id="asset-filter" placeholder="Filtrar ticker/empresa…" aria-label="Filtrar ativos" style="width:180px"><select id="asset-signal-filter" class="b-input" aria-label="Filtrar sinal"><option value="all">Todos os sinais</option><option value="compra">Compra</option><option value="venda">Venda</option><option value="neutro">Neutro</option></select><select id="asset-sort" class="b-input" aria-label="Ordenar ativos"><option value="default">Ordem original</option><option value="change">Variação do dia</option><option value="return">Retorno projetado</option><option value="rsi">RSI 14</option><option value="volume">Volume</option><option value="pressure">Pressão compradora</option><option value="ticker">Ticker A–Z</option></select><button class="b-button" id="export-csv" type="button">Exportar CSV</button></div></div>
     <div class="scroll"><table id="tbl">
-      <thead><tr><th>Ativo</th><th>Preço</th><th>Dia</th><th>RSI</th><th>Tendência</th><th>Projeção</th><th>Retorno</th><th>Sinal</th></tr></thead>
+      <thead><tr><th>Ativo</th><th>Preço</th><th>Dia</th><th>RSI</th><th>Tendência</th><th>Projeção</th><th>Retorno</th><th>Volume</th><th>Pressão C/V</th><th>Sinal</th></tr></thead>
       <tbody></tbody>
     </table></div>
     <div class="warn" id="warn"></div>
@@ -467,31 +468,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
 <script>
 const ASSETS = [
-  {sym:"PETR4", frac:"APETR4F"},
-  {sym:"VALE3", frac:"AVALE3F"},
-  {sym:"TAEE4", frac:"ATAEE4F"},
-  {sym:"SUZB3", frac:"ASUZB3F"},
-  {sym:"SLCE3", frac:"ASLCE3F"},
-  {sym:"CMIG4", frac:"ACMIG4F"},
-  {sym:"LEVE3", frac:"ALEVE3F"},
-  {sym:"POMO3", frac:"APOMO3F"},
-  {sym:"USIM5", frac:"AUSIM5F"},
-  {sym:"CMIN3", frac:"ACMIN3"},
-  {sym:"BEES3", frac:"ABEES4F"},
-  {sym:"CURY3", frac:"ACURY3F"},
-  {sym:"ITUB4", frac:null},
-  {sym:"BBAS3", frac:null},
-  {sym:"WEGE3", frac:null},
-  {sym:"BBDC4", frac:null},
-  {sym:"B3SA3", frac:null},
-  {sym:"PRIO3", frac:null},
-  {sym:"ABEV3", frac:null},
-  {sym:"ITSA4", frac:null},
-  {sym:"BBSE3", frac:null},
-  {sym:"EGIE3", frac:null},
-  {sym:"RENT3", frac:null},
-  {sym:"RADL3", frac:null},
-  {sym:"LREN3", frac:null}
+  {sym:"PETR4", name:"Petrobras"},{sym:"VALE3", name:"Vale"},{sym:"TAEE4", name:"Taesa"},{sym:"SUZB3", name:"Suzano"},{sym:"SLCE3", name:"SLC Agrícola"},{sym:"CMIG4", name:"Cemig"},{sym:"BEES4", name:"Banestes"},{sym:"CURY3", name:"Cury"},{sym:"ITUB4", name:"Itaú Unibanco"},{sym:"BBAS3", name:"Banco do Brasil"},{sym:"WEGE3", name:"WEG"},{sym:"BBDC4", name:"Bradesco"},{sym:"B3SA3", name:"B3"},{sym:"PRIO3", name:"PRIO"},{sym:"ABEV3", name:"Ambev"},{sym:"ITSA4", name:"Itaúsa"},{sym:"BBSE3", name:"BB Seguridade"},{sym:"EGIE3", name:"Engie Brasil"},{sym:"RENT3", name:"Localiza"},{sym:"RADL3", name:"RD Saúde"},{sym:"LREN3", name:"Lojas Renner"},{sym:"YDUQ3F", apiSym:"YDUQ3", name:"YDUQS (ticker fracionário; dados-base YDUQ3)"},{sym:"EQTL3", name:"Equatorial Energia"},{sym:"VIVT3", name:"Telefônica Brasil"},{sym:"GGBR4", name:"Gerdau"},{sym:"CYRE3", name:"Cyrela"},{sym:"POMO3", name:"Marcopolo"},{sym:"LEVE3", name:"Mahle Metal Leve"},{sym:"USIM5", name:"Usiminas"},{sym:"CMIN3", name:"CSN Mineração"}
 ];
 
 const $ = id => document.getElementById(id);
@@ -554,43 +531,20 @@ function bizDays(from, count){
   return out;
 }
 
+function pressureStats(arr){const bars=arr.slice(-20);let buy=0,sell=0,flat=0;bars.forEach((p,i)=>{const v=Number(p.volume)||0;if(!(v>0))return;const o=Number(p.open),c=Number(p.close);if(Number.isFinite(o)&&o>0){if(c>o)buy+=v;else if(c<o)sell+=v;else flat+=v}else if(i){if(c>bars[i-1].close)buy+=v;else if(c<bars[i-1].close)sell+=v;else flat+=v}});const total=buy+sell+flat;return total?{buy:buy/total*100,sell:sell/total*100,balance:(buy-sell)/total*100}:{buy:null,sell:null,balance:null}}
 function metrics(arr){
-  const closes = arr.map(p=>p.close).filter(v=>v!=null);
+  const bars=arr.filter(p=>p&&p.close!=null).map(p=>({...p,close:Number(p.close),open:p.open==null?NaN:Number(p.open),high:p.high==null?NaN:Number(p.high),low:p.low==null?NaN:Number(p.low),volume:Number(p.volume)||0})).filter(p=>Number.isFinite(p.close)&&p.close>0);
+  const closes=bars.map(p=>p.close);
   if(closes.length<30) return null;
-  const last = closes[closes.length-1];
-  const prev = closes[closes.length-2] ?? last;
-  const chg = prev ? (last/prev-1)*100 : 0;
-  const s20 = sma(closes,20), s50 = sma(closes,50);
-  const r = rsi14(closes);
-  const pj = projection(closes);
-  const rets=[];
+  const last=closes[closes.length-1],prev=closes[closes.length-2]??last,chg=prev?(last/prev-1)*100:0,s20=sma(closes,20),s50=sma(closes,50),r=rsi14(closes),pj=projection(closes),rets=[];
   for(let i=Math.max(1,closes.length-252);i<closes.length;i++) rets.push(Math.log(closes[i]/closes[i-1]));
-  const vol = std(rets)*Math.sqrt(252)*100;
-  let peak=-Infinity, mdd=0;
-  closes.forEach(c=>{ peak=Math.max(peak,c); mdd=Math.min(mdd, c/peak-1); });
-  const high = Math.max(...closes.slice(-252));
-  const low = Math.min(...closes.slice(-252));
-
-  let score=0; const why=[];
-  if(s20!=null && s50!=null){
-    if(last>s20){ score++; why.push("preço acima da média de 20 dias"); }
-    else { score--; why.push("preço abaixo da média de 20 dias"); }
-    if(s20>s50){ score++; why.push("média curta acima da longa"); }
-    else { score--; why.push("média curta abaixo da longa"); }
-  }
-  if(r!=null){
-    if(r<30){ score++; why.push("RSI "+nf(r,0)+" em sobrevenda"); }
-    else if(r>70){ score--; why.push("RSI "+nf(r,0)+" em sobrecompra"); }
-    else why.push("RSI "+nf(r,0)+" em zona neutra");
-  }
-  if(pj){
-    if(pj.slopePct>0){ score++; why.push("inclinação positiva de "+nf(pj.slopePct,1)+"% no período"); }
-    else { score--; why.push("inclinação negativa de "+nf(pj.slopePct,1)+"% no período"); }
-  }
-  const signal = score>=2 ? "compra" : score<=-2 ? "venda" : "neutro";
-  const tone = score>=2 ? "up" : score<=-2 ? "down" : "mid";
-
-  return {arr, closes, last, chg, s20, s50, rsi:r, pj, vol, mdd, high, low, score, why, signal, tone};
+  const vol=std(rets)*Math.sqrt(252)*100;let peak=-Infinity,mdd=0;closes.forEach(c=>{peak=Math.max(peak,c);mdd=Math.min(mdd,c/peak-1)});
+  const high=Math.max(...closes.slice(-252)),low=Math.min(...closes.slice(-252));let score=0;const why=[];
+  if(s20!=null&&s50!=null){if(last>s20){score++;why.push("preço acima da média de 20 dias")}else{score--;why.push("preço abaixo da média de 20 dias")}if(s20>s50){score++;why.push("média curta acima da longa")}else{score--;why.push("média curta abaixo da longa")}}
+  if(r!=null){if(r<30){score++;why.push("RSI "+nf(r,0)+" em sobrevenda")}else if(r>70){score--;why.push("RSI "+nf(r,0)+" em sobrecompra")}else why.push("RSI "+nf(r,0)+" em zona neutra")}
+  if(pj){if(pj.slopePct>0){score++;why.push("inclinação positiva de "+nf(pj.slopePct,1)+"% no período")}else{score--;why.push("inclinação negativa de "+nf(pj.slopePct,1)+"% no período")}}
+  const signal=score>=2?"compra":score<=-2?"venda":"neutro",tone=score>=2?"up":score<=-2?"down":"mid",pressure=pressureStats(bars);
+  return {arr:bars,closes,last,prev,chg,s20,s50,rsi:r,pj,vol,mdd,high,low,score,why,signal,tone,volume:bars[bars.length-1]?.volume||0,pressure};
 }
 
 function renderCards(m){
@@ -616,87 +570,35 @@ function renderSignal(sym, m){
     <div class="rowline"><span class="b-muted">Banda de ±1 desvio</span><span class="b-num b-faint">${band}</span></div>
     <div class="rowline"><span class="b-muted">Faixa de 52 semanas</span><span class="b-num b-faint">${brapi.format.money(m.low)} – ${brapi.format.money(m.high)}</span></div>
     <div class="rowline"><span class="b-muted">Queda máxima em 12 meses</span><span class="b-num b-down">${nf(m.mdd*100,1)}%</span></div>
+    <div class="rowline"><span class="b-muted">Volume último pregão</span><span class="b-num">${nf(m.volume,0)}</span></div>
+    <div class="rowline"><span class="b-muted">Pressão estimada compra/venda</span><span class="b-num">${m.pressure.buy==null?"—":nf(m.pressure.buy,0)+"% / "+nf(m.pressure.sell,0)+"%"}</span></div>
     <div class="rowline"><span class="b-muted">Fechamento mais recente</span><span class="b-faint">${brapi.format.date(m.arr[m.arr.length-1].date)}</span></div>
     <ul style="margin:12px 0 0;padding-left:18px;font-size:12px;color:var(--muted);line-height:1.6">
       ${m.why.map(t=>`<li>${t}</li>`).join("")}
     </ul>`;
 }
 
-function renderChart(sym, m){
-  const hist = m.arr.slice(-90);
-  const labels = hist.map(p=>brapi.format.date(p.date));
-  const values = hist.map(p=>p.close);
-  const future = bizDays(new Date(m.arr[m.arr.length-1].date*1000), 21);
-  future.forEach(d=>labels.push(d.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"})));
-
-  const pv = new Array(values.length-1).fill(null);
-  pv.push(values[values.length-1]);
-  if(m.pj){
-    for(let h=1;h<=21;h++){
-      pv.push(m.pj.fit(m.pj.n-1+h));
-    }
-  }
-  const hv = values.concat(new Array(21).fill(null));
-  const c = brapi.colors();
-
-  if(state.chart) state.chart.destroy();
-  brapi.useChartTheme(Chart);
-  state.chart = new Chart($("chart"), {
-    type:"line",
-    data:{labels, datasets:[
-      {label:sym, data:hv, borderColor:c.accent, backgroundColor:"transparent", borderWidth:1.8, pointRadius:0, tension:.15},
-      {label:"projeção", data:pv, borderColor:c.up, borderWidth:1.6, borderDash:[5,4], pointRadius:0, tension:.15}
-    ]},
-    options:{
-      responsive:true, maintainAspectRatio:false,
-      interaction:{mode:"index",intersect:false},
-      plugins:{legend:{display:true,labels:{boxWidth:10,font:{size:11}}},
-        tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${ctx.parsed.y==null?"—":brapi.format.money(ctx.parsed.y)}`}}},
-      scales:{
-        x:{ticks:{maxTicksLimit:7,font:{size:10}}},
-        y:{ticks:{callback:v=>nf(v,0),font:{size:10}}}
-      }
-    }
-  });
+function renderChart(sym,m){const canvas=$("chart"),ctx=canvas.getContext("2d"),w=canvas.clientWidth||720,h=290,dpr=window.devicePixelRatio||1;canvas.width=w*dpr;canvas.height=h*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);const hist=m.arr.slice(-90),mode=$("chart-mode")?.value||"line",showVol=mode==="candle-volume",bottom=showVol?h*.72:h-24;const vals=hist.map(p=>p.close),min=Math.min(...vals,...hist.map(p=>Number(p.low)).filter(Number.isFinite))*.985,max=Math.max(...vals,...hist.map(p=>Number(p.high)).filter(Number.isFinite))*1.015,px=i=>44+i/Math.max(1,hist.length-1)*(w-58),py=v=>bottom-10-(v-min)/(max-min||1)*(bottom-34);ctx.strokeStyle="#e1e7ef";ctx.fillStyle="#64748b";ctx.font="10px system-ui";for(let i=0;i<5;i++){const y=16+i*(bottom-30)/4;ctx.beginPath();ctx.moveTo(44,y);ctx.lineTo(w-12,y);ctx.stroke();ctx.fillText(nf(max-i*(max-min)/4,2),2,y+3)}
+  if(mode.startsWith("candle")){const bw=Math.max(2,Math.min(8,(w-60)/hist.length*.65));hist.forEach((p,i)=>{if(!Number.isFinite(p.open)||!Number.isFinite(p.high)||!Number.isFinite(p.low))return;const color=p.close>=p.open?"#0f9f6e":"#d64555";ctx.strokeStyle=color;ctx.fillStyle=color;ctx.beginPath();ctx.moveTo(px(i),py(p.high));ctx.lineTo(px(i),py(p.low));ctx.stroke();const top=py(Math.max(p.open,p.close)),bot=py(Math.min(p.open,p.close));ctx.fillRect(px(i)-bw/2,top,bw,Math.max(1,bot-top))})}else{ctx.strokeStyle="#2563eb";ctx.lineWidth=2;ctx.beginPath();vals.forEach((v,i)=>i?ctx.lineTo(px(i),py(v)):ctx.moveTo(px(i),py(v)));ctx.stroke()}
+  ctx.strokeStyle="#d49a16";ctx.lineWidth=1.5;ctx.beginPath();vals.forEach((v,i)=>{const ma=sma(vals.slice(0,i+1),Math.min(20,i+1));i?ctx.lineTo(px(i),py(ma)):ctx.moveTo(px(i),py(ma))});ctx.stroke();
+  if(m.pj){const start=vals.length-1,endY=py(m.pj.target);ctx.strokeStyle="#2563eb";ctx.setLineDash([5,4]);ctx.beginPath();ctx.moveTo(px(start),py(vals[start]));ctx.lineTo(w-12,endY);ctx.stroke();ctx.setLineDash([])}
+  if(showVol){const maxV=Math.max(1,...hist.map(p=>p.volume||0));hist.forEach((p,i)=>{ctx.fillStyle=p.close>=p.open?"rgba(15,159,110,.55)":"rgba(214,69,85,.55)";const bh=(p.volume||0)/maxV*(h-bottom-18);ctx.fillRect(px(i)-2,h-12-bh,4,bh)});ctx.fillStyle="#64748b";ctx.fillText("Volume",46,h-3)}
 }
 
 function renderTable(){
-  const tb = $("tbl").querySelector("tbody");
-  const query = ($("asset-filter")?.value || "").trim().toUpperCase();
-  const sort = $("asset-sort")?.value || "default";
-  let list = ASSETS.filter(a=>a.sym.includes(query));
-  if(sort==="ticker") list.sort((a,b)=>a.sym.localeCompare(b.sym));
-  if(sort==="change") list.sort((a,b)=>(state.rows[b.sym]?.chg??-Infinity)-(state.rows[a.sym]?.chg??-Infinity));
-  if(sort==="return") list.sort((a,b)=>(((state.rows[b.sym]?.pj?.target/state.rows[b.sym]?.last)-1)||-Infinity)-(((state.rows[a.sym]?.pj?.target/state.rows[a.sym]?.last)-1)||-Infinity));
-  if(sort==="rsi") list.sort((a,b)=>(state.rows[a.sym]?.rsi??Infinity)-(state.rows[b.sym]?.rsi??Infinity));
-  tb.innerHTML = list.map(a=>{
-    const m = state.rows[a.sym];
-    if(!m) return `<tr data-sym="${a.sym}" class="${a.sym===state.sel?"sel":""}">
-      <td><strong>${a.sym}</strong>${a.frac?` <span class="b-faint" style="font-size:11px">${a.frac}</span>`:""}</td>
-      <td colspan="7" class="b-faint" style="text-align:left">sem dados neste acesso</td></tr>`;
-    const ret = m.pj ? (m.pj.target/m.last-1)*100 : null;
-    return `<tr data-sym="${a.sym}" class="${a.sym===state.sel?"sel":""}">
-      <td><strong>${a.sym}</strong>${a.frac?` <span class="b-faint" style="font-size:11px">${a.frac}</span>`:""}</td>
-      <td class="b-num">${nf(m.last)}</td>
-      <td class="b-num ${brapi.format.tone(m.chg)}">${brapi.format.change(m.chg)}</td>
-      <td class="b-num">${m.rsi==null?"—":nf(m.rsi,0)}</td>
-      <td>${m.s20&&m.s50?(m.last>m.s20&&m.last>m.s50?"alta":m.last<m.s20&&m.last<m.s50?"baixa":"mista"):"—"}</td>
-      <td class="b-num">${m.pj?nf(m.pj.target):"—"}</td>
-      <td class="b-num ${ret==null?"b-muted":brapi.format.tone(ret)}">${ret==null?"—":brapi.format.change(ret)}</td>
-      <td><span class="pill ${m.tone}">${m.signal}</span></td></tr>`;
-  }).join("");
-
-  tb.querySelectorAll("tr[data-sym]").forEach(tr=>{
-    tr.addEventListener("click", ()=>{
-      const s = tr.getAttribute("data-sym");
-      if(!state.rows[s]) return;
-      state.sel = s;
-      $("picker").value = s;
-      renderTable();
-      paint();
-    });
-  });
+  const tb=$("tbl").querySelector("tbody"),query=($("asset-filter")?.value||"").trim().toUpperCase(),sort=$("asset-sort")?.value||"default",sig=$("asset-signal-filter")?.value||"all";
+  let list=ASSETS.filter(a=>(a.sym+" "+(a.name||"")).toUpperCase().includes(query));
+  list=list.filter(a=>sig==="all"||state.rows[a.sym]?.signal===sig);
+  if(sort==="ticker")list.sort((a,b)=>a.sym.localeCompare(b.sym));
+  if(sort==="change")list.sort((a,b)=>(state.rows[b.sym]?.chg??-Infinity)-(state.rows[a.sym]?.chg??-Infinity));
+  if(sort==="return")list.sort((a,b)=>(((state.rows[b.sym]?.pj?.target/state.rows[b.sym]?.last)-1)||-Infinity)-(((state.rows[a.sym]?.pj?.target/state.rows[a.sym]?.last)-1)||-Infinity));
+  if(sort==="rsi")list.sort((a,b)=>(state.rows[a.sym]?.rsi??Infinity)-(state.rows[b.sym]?.rsi??Infinity));
+  if(sort==="volume")list.sort((a,b)=>(state.rows[b.sym]?.volume??-Infinity)-(state.rows[a.sym]?.volume??-Infinity));
+  if(sort==="pressure")list.sort((a,b)=>(state.rows[b.sym]?.pressure?.balance??-Infinity)-(state.rows[a.sym]?.pressure?.balance??-Infinity));
+  tb.innerHTML=list.map(a=>{const m=state.rows[a.sym];if(!m)return `<tr data-sym="${a.sym}" class="${a.sym===state.sel?"sel":""}"><td><strong>${a.sym}</strong><div class="b-faint">${a.name||""}</div></td><td colspan="9" class="b-faint" style="text-align:left">sem dados neste acesso</td></tr>`;const ret=m.pj?(m.pj.target/m.last-1)*100:null;return `<tr data-sym="${a.sym}" class="${a.sym===state.sel?"sel":""}"><td><strong>${a.sym}</strong><div class="b-faint">${a.name||""}</div></td><td class="b-num">${nf(m.last)}</td><td class="b-num ${brapi.format.tone(m.chg)}">${brapi.format.change(m.chg)}</td><td class="b-num">${m.rsi==null?"—":nf(m.rsi,0)}</td><td>${m.s20&&m.s50?(m.last>m.s20&&m.last>m.s50?"alta":m.last<m.s20&&m.last<m.s50?"baixa":"mista"):"—"}</td><td class="b-num">${m.pj?nf(m.pj.target):"—"}</td><td class="b-num ${ret==null?"b-muted":brapi.format.tone(ret)}">${ret==null?"—":brapi.format.change(ret)}</td><td class="b-num">${nf(m.volume,0)}</td><td class="b-num">${m.pressure.buy==null?"—":nf(m.pressure.buy,0)+"% / "+nf(m.pressure.sell,0)+"%"}</td><td><span class="pill ${m.tone}">${m.signal}</span></td></tr>`}).join("");
+  tb.querySelectorAll("tr[data-sym]").forEach(tr=>tr.addEventListener("click",()=>{const s=tr.getAttribute("data-sym");if(!state.rows[s])return;state.sel=s;$("picker").value=s;renderTable();paint()}));renderMarketPulse();
 }
+function renderMarketPulse(){const ms=ASSETS.map(a=>state.rows[a.sym]).filter(Boolean);if(!ms.length)return;const adv=ms.filter(m=>m.chg>0).length,dec=ms.filter(m=>m.chg<0).length,above=ms.filter(m=>m.last>m.s20).length,balance=ms.map(m=>m.pressure.balance).filter(Number.isFinite),pressure=balance.length?balance.reduce((a,b)=>a+b,0)/balance.length:null;let dir="Misto / lateral",tone="mid";if(adv/ms.length>=.6&&above/ms.length>=.6&&(pressure==null||pressure>0)){dir="Viés de alta";tone="up"}else if(dec/ms.length>=.6&&above/ms.length<.4&&(pressure==null||pressure<0)){dir="Viés de baixa";tone="down"}$("market-direction").className="pill "+tone;$("market-direction").textContent=dir;$("market-pulse").innerHTML=[["Ativos em alta / baixa",`${adv} / ${dec} de ${ms.length}`],["Acima da SMA 20",nf(above/ms.length*100,0)+"%"],["Saldo de pressão por volume",pressure==null?"Sem dados suficientes":(pressure>0?"+":"")+nf(pressure,1)+"%"]].map(([k,v])=>`<div class="b-card"><div class="b-label">${k}</div><div class="b-value">${v}</div></div>`).join("")}
 
 function paint(){
   const m = state.rows[state.sel];
@@ -708,24 +610,27 @@ function paint(){
 
 async function loadOne(a){
   try{
-    const r = await brapi.get("/api/v2/stocks/historical", {symbols:a.sym, range:"1y", interval:"1d"});
-    const arr = r && r.results && r.results[0] && r.results[0].data && r.results[0].data.historicalDataPrice;
+    let r = await brapi.get("/api/v2/stocks/historical", {symbols:a.sym, range:"1y", interval:"1d"});
+    let arr = r && r.results && r.results[0] && r.results[0].data && r.results[0].data.historicalDataPrice;
+    if((!arr||!arr.length)&&a.apiSym){r=await brapi.get("/api/v2/stocks/historical", {symbols:a.apiSym, range:"1y", interval:"1d"});arr=r&&r.results&&r.results[0]&&r.results[0].data&&r.results[0].data.historicalDataPrice;}
     if(!arr || !arr.length) return null;
     return metrics(arr.filter(p=>p && p.close!=null).sort((x,y)=>x.date-y.date));
-  }catch(e){ return null; }
+  }catch(e){if(a.apiSym){try{const r=await brapi.get("/api/v2/stocks/historical", {symbols:a.apiSym, range:"1y", interval:"1d"});const arr=r&&r.results&&r.results[0]&&r.results[0].data&&r.results[0].data.historicalDataPrice;if(arr&&arr.length)return metrics(arr.filter(p=>p&&p.close!=null).sort((x,y)=>x.date-y.date));}catch(_){}}return null;}
 }
 
 (async function init(){
   const picker = $("picker");
-  picker.innerHTML = ASSETS.map(a=>`<option value="${a.sym}">${a.sym}${a.frac?" · "+a.frac:""}</option>`).join("");
+  picker.innerHTML = ASSETS.map(a=>`<option value="${a.sym}">${a.sym} — ${a.name||""}</option>`).join("");
   picker.value = state.sel;
   picker.addEventListener("change", ()=>{ if(state.rows[picker.value]){ state.sel=picker.value; renderTable(); paint(); } else { picker.value = state.sel; } });
 
   $("asset-filter").addEventListener("input",renderTable);
   $("asset-sort").addEventListener("change",renderTable);
+  $("asset-signal-filter").addEventListener("change",renderTable);
+  $("chart-mode").addEventListener("change",()=>{const m=state.rows[state.sel];if(m)renderChart(state.sel,m)});
   $("export-csv").addEventListener("click",()=>{
-    const rows=[["Ticker","Preço","Variação (%)","RSI 14","Média 20","Média 50","Volatilidade anual (%)","Projeção 21 pregões","Retorno projetado (%)","Sinal"]];
-    ASSETS.forEach(a=>{const m=state.rows[a.sym];if(m)rows.push([a.sym,m.last,m.chg,m.rsi,m.s20,m.s50,m.vol,m.pj?.target,m.pj?(m.pj.target/m.last-1)*100:"",m.signal])});
+    const rows=[["Ticker","Preço","Variação (%)","RSI 14","Média 20","Média 50","Volatilidade anual (%)","Volume","Pressão compra (%)","Pressão venda (%)","Saldo pressão (%)","Projeção 21 pregões","Retorno projetado (%)","Sinal"]];
+    ASSETS.forEach(a=>{const m=state.rows[a.sym];if(m)rows.push([a.sym,m.last,m.chg,m.rsi,m.s20,m.s50,m.vol,m.volume,m.pressure.buy,m.pressure.sell,m.pressure.balance,m.pj?.target,m.pj?(m.pj.target/m.last-1)*100:"",m.signal])});
     const csv="\\ufeff"+rows.map(r=>r.map(v=>`"${String(v??"").replace(/"/g,'""')}"`).join(";")).join("\\r\\n");
     const url=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8;"}));const a=document.createElement("a");a.href=url;a.download="radar-ativos-b3.csv";a.click();URL.revokeObjectURL(url);
   });
@@ -743,7 +648,7 @@ async function loadOne(a){
   $("stamp").textContent = new Date().toLocaleString("pt-BR",{dateStyle:"short",timeStyle:"short"});
   const missing = ASSETS.length - loaded;
   $("warn").textContent = missing
-    ? `${missing} de ${ASSETS.length} ativos sem dados neste acesso. Entre na conta brapi para liberar os demais tickers.`
+    ? `${missing} de ${ASSETS.length} ativos sem dados neste acesso. Alguns tickers exigem token ou podem não estar cobertos pelo plano.`
     : "";
 
   renderTable();
