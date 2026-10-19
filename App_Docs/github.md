@@ -19,7 +19,6 @@ git config --show-origin --get-all credential.helper
 git credential-manager github login
 ```
 
-
 #### conexão via tokens
 <https://github.com/settings/personal-access-tokens>
 <https://github.com/settings/tokens>
