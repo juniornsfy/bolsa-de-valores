@@ -23,5 +23,5 @@ git credential-manager github login
 <https://github.com/settings/personal-access-tokens>
 <https://github.com/settings/tokens>
 ```
-git remote set-url origin https://<SEU_TOKEN>@github.com/juniornsfp/bolsa-de-valores.git
+git remote set-url origin https://<SEU_TOKEN>@github.com/juniornsfy/bolsa-de-valores.git
 ```
