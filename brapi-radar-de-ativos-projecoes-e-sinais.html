@@ -1,0 +1,739 @@
+<!doctype html>
+<!--
+  Radar de ativos · projeções e sinais
+  Painel criado com a BRAPI AI (https://brapi.dev/ai).
+  Ao abrir o arquivo, informe a sua chave da API da brapi no diálogo.
+  Crie a chave em https://brapi.dev/dashboard. Sem chave, a API mostra só os ativos de teste.
+  Para usar outros serviços, inclua o endereço deles na linha Content-Security-Policy.
+-->
+
+<html lang="pt-BR" data-presentation="card">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src https://fonts.gstatic.com https://cdn.jsdelivr.net data:; img-src https://icons.brapi.dev data: blob:; connect-src https://brapi.dev; form-action 'none'; base-uri 'none'">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>Radar de ativos · projeções e sinais</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>:root{color-scheme:dark;--bg:#050807;--surface:rgba(255,255,255,.035);--surface-2:rgba(255,255,255,.06);--surface-hover:rgba(255,255,255,.07);--border:rgba(255,255,255,.08);--border-strong:rgba(255,255,255,.14);--fg:#f4f6f5;--muted:rgba(244,246,245,.58);--faint:rgba(244,246,245,.36);--accent:#6ee7b7;--brand:#1fd184;--up:#4ade80;--down:#f7768e;--info:#60a5fa;--warn:#fbbf24;--c1:#6ee7b7;--c2:#60a5fa;--c3:#c084fc;--c4:#fbbf24;--c5:#f472b6;--c6:#22d3ee;--grid:rgba(255,255,255,.06);--radius:16px;--font:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace}:root[data-theme=light]{color-scheme:light;--bg:#fafaf9;--surface:#fff;--surface-2:#f4f5f4;--surface-hover:#f0f2f1;--border:rgba(15,26,20,.09);--border-strong:rgba(15,26,20,.16);--fg:#0f1a14;--muted:rgba(15,26,20,.6);--faint:rgba(15,26,20,.4);--accent:#047857;--brand:#059669;--up:#15803d;--down:#e11d48;--info:#2563eb;--warn:#b45309;--c1:#059669;--c2:#2563eb;--c3:#7c3aed;--c4:#d97706;--c5:#db2777;--c6:#0891b2;--grid:rgba(15,26,20,.07)}*,*::before,*::after{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--fg)}body{font:14px/1.5 var(--font);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;font-feature-settings:"cv11","ss01"}h1,h2,h3,h4,p{margin:0}h1{font-size:20px;font-weight:600;letter-spacing:-.02em}h2{font-size:15px;font-weight:600;letter-spacing:-.01em}h3{font-size:13px;font-weight:500;color:var(--muted)}a{color:var(--accent);text-decoration:none}button,input,select{font:inherit;color:inherit}::selection{background:color-mix(in srgb,var(--accent) 30%,transparent)}::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:8px}::-webkit-scrollbar-track{background:transparent}.b-app{padding:20px;display:flex;flex-direction:column;gap:16px;max-width:1200px;margin:0 auto}.b-header{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}.b-subtitle{color:var(--muted);font-size:13px;margin-top:2px}.b-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}.b-grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px}.b-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;min-width:0;transition:border-color .2s ease,background .2s ease}.b-card:hover{border-color:var(--border-strong)}.b-label{color:var(--muted);font-size:12px;font-weight:500}.b-value{font-size:26px;font-weight:600;letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:1.15;margin-top:6px}.b-num{font-variant-numeric:tabular-nums}.b-muted{color:var(--muted)}.b-faint{color:var(--faint)}.b-up{color:var(--up)}.b-down{color:var(--down)}.b-row{display:flex;align-items:center;gap:8px}.b-pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);background:var(--surface-2);border-radius:999px;padding:2px 10px;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}.b-pill.b-up{color:var(--up);background:color-mix(in srgb,var(--up) 12%,transparent);border-color:color-mix(in srgb,var(--up) 22%,transparent)}.b-pill.b-down{color:var(--down);background:color-mix(in srgb,var(--down) 12%,transparent);border-color:color-mix(in srgb,var(--down) 22%,transparent)}.b-tabs{display:inline-flex;gap:2px;padding:3px;border:1px solid var(--border);border-radius:999px;background:var(--surface)}.b-tab{border:0;background:transparent;color:var(--muted);padding:4px 12px;border-radius:999px;font-size:12px;font-weight:500;cursor:pointer;transition:background .15s ease,color .15s ease}.b-tab:hover{color:var(--fg)}.b-tab[aria-selected=true]{background:var(--surface-2);color:var(--fg)}.b-input{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:7px 12px;outline:none;min-width:0;transition:border-color .15s ease}.b-input:focus{border-color:var(--accent)}.b-button{display:inline-flex;align-items:center;gap:6px;border:0;border-radius:999px;background:var(--fg);color:var(--bg);padding:7px 14px;font-size:13px;font-weight:500;cursor:pointer;transition:transform .15s ease,opacity .15s ease}.b-button:hover{opacity:.9}.b-button:active{transform:scale(.97)}.b-table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}.b-table th{color:var(--muted);font-weight:500;font-size:12px;text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);white-space:nowrap}.b-table td{padding:9px 10px;border-bottom:1px solid var(--border);white-space:nowrap}.b-table tr:last-child td{border-bottom:0}.b-table tbody tr{transition:background .15s ease}.b-table tbody tr:hover{background:var(--surface-hover)}.b-table .b-right,.b-right{text-align:right}.b-chart{position:relative;width:100%;height:260px}.b-logo{width:28px;height:28px;border-radius:8px;background:var(--surface-2);object-fit:cover;flex:none}.b-skeleton{position:relative;overflow:hidden;background:var(--surface-2);border-radius:8px;min-height:14px}.b-skeleton::after{content:"";position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--fg) 7%,transparent),transparent);animation:b-shimmer 1.4s ease-in-out infinite}@keyframes b-shimmer{to{transform:translateX(100%)}}.b-fade{animation:b-fade .45s cubic-bezier(.22,1,.36,1) both}@keyframes b-fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}.b-error{border:1px solid color-mix(in srgb,var(--down) 30%,transparent);background:color-mix(in srgb,var(--down) 8%,transparent);color:var(--fg);border-radius:12px;padding:12px 14px;font-size:13px}.b-error strong{display:block;color:var(--down);font-weight:500;margin-bottom:2px}.b-key-dialog{width:min(420px,calc(100% - 32px));max-height:calc(100svh - 32px);margin:auto;padding:24px;border:1px solid var(--border-strong);border-radius:var(--radius);background:var(--bg);color:var(--fg);box-shadow:0 24px 80px rgba(0,0,0,.35)}.b-key-dialog::backdrop{background:rgba(0,0,0,.65)}.b-key-dialog form{display:flex;flex-direction:column;gap:16px}.b-key-dialog label{display:flex;flex-direction:column;gap:6px}.b-key-dialog .b-input{width:100%}.b-key-dialog .b-key-skip{background:transparent;color:var(--muted);border:1px solid var(--border)}@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}</style>
+<script>window.BRAPI_CONFIG = {"baseUrl":"https://brapi.dev","concurrency":1,"mode":"download","theme":"light","token":null};</script>
+<script>(function () {
+  var config = window.BRAPI_CONFIG || {};
+  var host = config.mode === "preview" && window.parent !== window ? window.parent : null;
+  var root = document.documentElement;
+  var keyReady = Promise.resolve();
+  root.setAttribute("data-theme", config.theme === "light" ? "light" : "dark");
+
+  function post(type, payload) {
+    if (!host) return;
+    var message = { source: "brapi-artifact", frameId: config.frameId, type: type };
+    for (var key in payload) message[key] = payload[key];
+    try { host.postMessage(message, "*"); } catch (error) {}
+  }
+
+  // The chat frame has no storage. Code that uses it keeps working in memory.
+  function memoryStorage() {
+    var data = {};
+    return {
+      getItem: function (key) { return Object.prototype.hasOwnProperty.call(data, key) ? data[key] : null; },
+      setItem: function (key, value) { data[key] = String(value); },
+      removeItem: function (key) { delete data[key]; },
+      clear: function () { data = {}; },
+      key: function (index) { return Object.keys(data)[index] || null; },
+      get length() { return Object.keys(data).length; }
+    };
+  }
+  ["localStorage", "sessionStorage"].forEach(function (name) {
+    try { window[name].getItem("brapi"); } catch (error) {
+      try { Object.defineProperty(window, name, { value: memoryStorage(), configurable: true }); } catch (ignored) {}
+    }
+  });
+
+  function BrapiError(message, status, body) {
+    var error = new Error(message);
+    error.name = "BrapiError";
+    error.status = status;
+    error.body = body;
+    return error;
+  }
+
+  function buildUrl(path, params) {
+    if (typeof path !== "string" || path.indexOf("/api/") !== 0) {
+      throw BrapiError("brapi.get aceita caminhos como /api/v2/stocks/quote.", 0, null);
+    }
+    var url = new URL(path, config.baseUrl);
+    if (params) {
+      Object.keys(params).forEach(function (key) {
+        var value = params[key];
+        if (value === undefined || value === null || value === "") return;
+        url.searchParams.set(key, Array.isArray(value) ? value.join(",") : String(value));
+      });
+    }
+    return url;
+  }
+
+  function messageFrom(status, body) {
+    if (body && typeof body === "object") {
+      if (typeof body.message === "string" && body.message) return body.message;
+      if (typeof body.error === "string" && body.error) return body.error;
+    }
+    if (status === 401) return "Chave da API ausente ou inválida.";
+    if (status === 402 || status === 403) return "Seu plano não inclui estes dados.";
+    if (status === 429) return "Limite de requisições atingido.";
+    return status ? "A API respondeu com erro " + status + "." : "Sem conexão com a API da brapi.";
+  }
+
+  var pending = {};
+  var nextRequestId = 1;
+  function startRequest(request) {
+    if (request.timer) return;
+    request.timer = setTimeout(function () {
+      if (!pending[request.id]) return;
+      delete pending[request.id];
+      request.reject(BrapiError("A API demorou para responder.", 0, null));
+    }, 155500);
+  }
+  window.addEventListener("message", function (event) {
+    if (!host || event.source !== host) return;
+    var data = event.data;
+    if (!data || data.source !== "brapi-artifact-host" || data.frameId !== config.frameId) return;
+    if (data.type === "theme") {
+      root.setAttribute("data-theme", data.theme === "light" ? "light" : "dark");
+      window.dispatchEvent(new CustomEvent("brapi:theme", { detail: data.theme }));
+      return;
+    }
+    if (data.type === "start") {
+      var started = pending[data.requestId];
+      if (started) startRequest(started);
+      return;
+    }
+    if (data.type !== "response") return;
+    var request = pending[data.requestId];
+    if (!request) return;
+    delete pending[data.requestId];
+    if (request.timer) clearTimeout(request.timer);
+    if (data.ok) request.resolve(data.body);
+    else request.reject(BrapiError(messageFrom(data.status, data.body), data.status || 0, data.body || null));
+  });
+
+  function viaHost(url) {
+    return new Promise(function (resolve, reject) {
+      var requestId = nextRequestId++;
+      pending[requestId] = { id: requestId, resolve: resolve, reject: reject, timer: null };
+      post("fetch", { requestId: requestId, url: url.pathname + url.search });
+    });
+  }
+
+  // The plan limits requests at the same time, so they wait in a queue.
+  var running = 0;
+  var waiting = [];
+  function runNext() {
+    if (running >= (config.concurrency || 1) || !waiting.length) return;
+    running += 1;
+    var job = waiting.shift();
+    job().then(function () { running -= 1; runNext(); });
+  }
+  function isConcurrencyLimit(status, body) {
+    return status === 429 && body && body.details && typeof body.details.concurrencyLimit === "number";
+  }
+  function attempt(url, retry) {
+    var headers = { Accept: "application/json" };
+    if (config.token) headers.Authorization = "Bearer " + config.token;
+    return fetch(url.toString(), { headers: headers }).then(
+      function (response) {
+        return response.text().then(function (text) {
+          var body = null;
+          try { body = text ? JSON.parse(text) : null; } catch (error) { body = text; }
+          if (isConcurrencyLimit(response.status, body) && retry < 4) {
+            return new Promise(function (resolve) { setTimeout(resolve, 350 * (retry + 1)); })
+              .then(function () { return attempt(url, retry + 1); });
+          }
+          if (!response.ok) throw BrapiError(messageFrom(response.status, body), response.status, body);
+          return body;
+        });
+      },
+      function () { throw BrapiError(messageFrom(0, null), 0, null); }
+    );
+  }
+  function direct(url) {
+    return new Promise(function (resolve, reject) {
+      waiting.push(function () {
+        return attempt(url, 0).then(resolve, reject);
+      });
+      runNext();
+    });
+  }
+
+  function toNumber(value) {
+    if (value === null || value === undefined || value === "") return NaN;
+    return typeof value === "number" ? value : Number(value);
+  }
+  function numberFormat(options) { return new Intl.NumberFormat("pt-BR", options); }
+  var EMPTY = "—";
+  var format = {
+    money: function (value, currency) {
+      var number = toNumber(value);
+      if (!isFinite(number)) return EMPTY;
+      return numberFormat({ style: "currency", currency: currency || "BRL", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(number);
+    },
+    number: function (value, digits) {
+      var number = toNumber(value);
+      if (!isFinite(number)) return EMPTY;
+      var fraction = digits === undefined ? 2 : digits;
+      return numberFormat({ minimumFractionDigits: fraction, maximumFractionDigits: fraction }).format(number);
+    },
+    compact: function (value, currency) {
+      var number = toNumber(value);
+      if (!isFinite(number)) return EMPTY;
+      var options = { notation: "compact", maximumFractionDigits: 1 };
+      if (currency) { options.style = "currency"; options.currency = currency; }
+      return numberFormat(options).format(number);
+    },
+    percent: function (value, digits, signed) {
+      var number = toNumber(value);
+      if (!isFinite(number)) return EMPTY;
+      var text = numberFormat({ minimumFractionDigits: digits === undefined ? 2 : digits, maximumFractionDigits: digits === undefined ? 2 : digits }).format(number) + "%";
+      return signed && number > 0 ? "+" + text : text;
+    },
+    change: function (value, digits) { return format.percent(value, digits, true); },
+    date: function (value, withTime) {
+      if (value === null || value === undefined || value === "") return EMPTY;
+      var date = typeof value === "number" ? new Date(value < 1e11 ? value * 1000 : value) : new Date(value);
+      if (isNaN(date.getTime())) return EMPTY;
+      var options = { day: "2-digit", month: "2-digit", year: "numeric", timeZone: "America/Sao_Paulo" };
+      if (withTime) { options.hour = "2-digit"; options.minute = "2-digit"; }
+      return new Intl.DateTimeFormat("pt-BR", options).format(date);
+    },
+    tone: function (value) {
+      var number = toNumber(value);
+      if (!isFinite(number) || number === 0) return "b-muted";
+      return number > 0 ? "b-up" : "b-down";
+    }
+  };
+
+  function cssVar(name) { return getComputedStyle(root).getPropertyValue(name).trim(); }
+  function colors() {
+    return {
+      fg: cssVar("--fg"), muted: cssVar("--muted"), faint: cssVar("--faint"), grid: cssVar("--grid"),
+      border: cssVar("--border"), surface: cssVar("--surface"), bg: cssVar("--bg"),
+      up: cssVar("--up"), down: cssVar("--down"), accent: cssVar("--accent"),
+      palette: ["--c1", "--c2", "--c3", "--c4", "--c5", "--c6"].map(cssVar)
+    };
+  }
+
+  function useChartTheme(Chart) {
+    if (!Chart || !Chart.defaults) return colors();
+    var c = colors();
+    Chart.defaults.color = c.muted;
+    Chart.defaults.borderColor = c.grid;
+    Chart.defaults.font.family = cssVar("--font");
+    Chart.defaults.font.size = 11;
+    Chart.defaults.maintainAspectRatio = false;
+    Chart.defaults.animation = { duration: 500, easing: "easeOutQuart" };
+    Chart.defaults.plugins.legend.labels.boxWidth = 8;
+    Chart.defaults.plugins.legend.labels.boxHeight = 8;
+    Chart.defaults.plugins.legend.labels.usePointStyle = true;
+    Chart.defaults.plugins.tooltip.backgroundColor = c.bg;
+    Chart.defaults.plugins.tooltip.borderColor = c.border;
+    Chart.defaults.plugins.tooltip.borderWidth = 1;
+    Chart.defaults.plugins.tooltip.titleColor = c.fg;
+    Chart.defaults.plugins.tooltip.bodyColor = c.muted;
+    Chart.defaults.plugins.tooltip.padding = 10;
+    Chart.defaults.plugins.tooltip.cornerRadius = 10;
+    Chart.defaults.elements.line.borderWidth = 2;
+    Chart.defaults.elements.line.tension = 0.25;
+    Chart.defaults.elements.point.radius = 0;
+    Chart.defaults.elements.point.hoverRadius = 4;
+    Chart.defaults.elements.bar.borderRadius = 4;
+    return c;
+  }
+
+  function renderError(target, error) {
+    // A caught code error still reaches the check. API errors arrive there as
+    // failed requests already.
+    if (!(error && error.name === "BrapiError")) {
+      report((error && error.message) || String(error || "Erro desconhecido"));
+    }
+    var element = typeof target === "string" ? document.querySelector(target) : target;
+    if (!element) return;
+    var box = document.createElement("div");
+    box.className = "b-error";
+    var title = document.createElement("strong");
+    title.textContent = "Não foi possível carregar os dados";
+    var text = document.createElement("span");
+    text.textContent = (error && error.message) || String(error || "Erro desconhecido");
+    box.appendChild(title);
+    box.appendChild(text);
+    element.innerHTML = "";
+    element.appendChild(box);
+  }
+
+  window.brapi = {
+    get: function (path, params) {
+      try {
+        var url = buildUrl(path, params);
+        return host ? viaHost(url) : keyReady.then(function () { return direct(url); });
+      } catch (error) {
+        return Promise.reject(error);
+      }
+    },
+    format: format,
+    colors: colors,
+    useChartTheme: useChartTheme,
+    renderError: renderError,
+    hasKey: Boolean(config.token) || config.hasKey === true
+  };
+
+  // A shared promise holds every initial request until the file's owner
+  // enters a key or chooses anonymous access. Never persist the entered key.
+  if (config.mode === "download" && !config.token) {
+    keyReady = new Promise(function (resolve) {
+      function showKeyDialog() {
+        var dialog = document.createElement("dialog");
+        dialog.className = "b-key-dialog";
+        dialog.setAttribute("aria-labelledby", "brapi-key-title");
+        dialog.setAttribute("aria-describedby", "brapi-key-description");
+        dialog.innerHTML = '<form><div><h1 id="brapi-key-title">Chave da API da brapi</h1><p id="brapi-key-description" class="b-subtitle">Use sua chave para carregar os dados do seu plano.</p></div><label>Chave da API<input class="b-input" name="token" type="password" autocomplete="off" spellcheck="false" placeholder="Cole sua chave aqui" required></label><p class="b-faint">A chave vale apenas enquanto esta página estiver aberta. <a href="https://brapi.dev/dashboard" target="_blank" rel="noopener noreferrer">Obter minha chave</a></p><button class="b-button" type="submit">Carregar painel</button><button class="b-button b-key-skip" type="button">Usar ativos de teste</button></form>';
+        var input = dialog.querySelector("input");
+        var form = dialog.querySelector("form");
+        function finish(token) {
+          config.token = token;
+          window.brapi.hasKey = Boolean(token);
+          input.value = "";
+          dialog.close();
+          dialog.remove();
+          resolve();
+        }
+        form.addEventListener("submit", function (event) {
+          event.preventDefault();
+          var token = input.value.trim();
+          if (!token) {
+            input.setCustomValidity("Cole sua chave da API para continuar.");
+            input.reportValidity();
+            return;
+          }
+          finish(token);
+        });
+        input.addEventListener("input", function () { input.setCustomValidity(""); });
+        dialog.querySelector('button[type="button"]').addEventListener("click", function () { finish(null); });
+        dialog.addEventListener("cancel", function (event) {
+          event.preventDefault();
+          finish(null);
+        });
+        document.body.appendChild(dialog);
+        dialog.showModal();
+        input.focus();
+      }
+      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", showKeyDialog, { once: true });
+      else showKeyDialog();
+    });
+  }
+
+  function report(message) {
+    var text = String(message || "Erro no script do painel").slice(0, 300);
+    if (host) { post("error", { message: text }); return; }
+    if (window.console) console.error("[brapi]", text);
+  }
+  window.addEventListener("error", function (event) {
+    var target = event.target;
+    if (target && target !== window) {
+      // A missing logo or font is not an error of the page code.
+      if (target.tagName === "SCRIPT") report("Não foi possível carregar " + (target.src || "um script") + ".");
+      return;
+    }
+    var message = event.message || (event.error && event.error.message) || "";
+    // The line in the model's HTML, so the check can point at it.
+    var line = event.lineno - (config.lineOffset || 0);
+    if (message && config.lineOffset && line > 0 && /srcdoc/.test(event.filename || "")) {
+      message += " (linha " + line + " do HTML)";
+    }
+    report(message);
+  }, true);
+  window.addEventListener("unhandledrejection", function (event) {
+    var reason = event.reason;
+    report(reason && reason.message ? reason.message : String(reason));
+  });
+
+  if (!host) return;
+  // The body height, not the root: the root is never shorter than the frame.
+  function contentHeight() {
+    var body = document.body;
+    if (!body) return 0;
+    var style = getComputedStyle(body);
+    var margins = (parseFloat(style.marginTop) || 0) + (parseFloat(style.marginBottom) || 0);
+    return Math.ceil(Math.max(body.scrollHeight, body.getBoundingClientRect().height) + margins);
+  }
+  var lastHeight = 0;
+  function measure() {
+    var height = contentHeight();
+    if (Math.abs(height - lastHeight) < 2) return;
+    lastHeight = height;
+    post("resize", { height: height });
+  }
+  function start() {
+    lastHeight = contentHeight();
+    post("ready", { height: lastHeight });
+    if (window.ResizeObserver && document.body) new ResizeObserver(measure).observe(document.body);
+    window.addEventListener("load", measure);
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
+  else start();
+})();</script>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Radar de ativos</title>
+<style>
+  body{margin:0;background:var(--bg);color:var(--fg);font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  .b-app{padding:20px;max-width:1100px;margin:0 auto}
+  .b-header{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:space-between;margin-bottom:16px}
+  h1{font-size:20px;margin:0;letter-spacing:-.2px}
+  .b-subtitle{margin:4px 0 0;font-size:12px;color:var(--muted)}
+  .b-card{padding:16px;margin-bottom:14px}
+  .b-card .b-label{margin-bottom:10px}
+  .b-chart{height:280px;position:relative}
+  #cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+  .m{padding:12px 14px}
+  .m .b-value{font-size:19px;margin-top:2px}
+  .two{display:grid;grid-template-columns:1.55fr 1fr;gap:14px}
+  @media(max-width:820px){.two{grid-template-columns:1fr}}
+  .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table{width:100%;border-collapse:collapse;font-size:13px;min-width:620px}
+  th,td{padding:9px 8px;border-bottom:1px solid var(--border);text-align:right;white-space:nowrap}
+  th:first-child,td:first-child{text-align:left}
+  th{color:var(--muted);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.4px}
+  tbody tr{cursor:pointer}
+  tbody tr:hover{background:var(--surface-2)}
+  tbody tr.sel{background:var(--surface-2);box-shadow:inset 2px 0 0 var(--accent)}
+  .pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;border:1px solid var(--border);background:var(--surface-2)}
+  .pill.up{color:var(--up);border-color:var(--up)}
+  .pill.down{color:var(--down);border-color:var(--down)}
+  .pill.mid{color:var(--muted)}
+  .rowline{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px dashed var(--border);font-size:13px}
+  .rowline:last-child{border:0}
+  .big{font-size:15px;font-weight:600}
+  .foot{font-size:11px;color:var(--faint);line-height:1.5;margin-top:14px}
+  .warn{font-size:11px;color:var(--muted);margin-top:8px}
+  select{background:var(--surface-2);color:var(--fg);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:13px}
+</style>
+</head>
+<body>
+<div class="b-app">
+  <header class="b-header">
+    <div>
+      <h1>Radar de ativos</h1>
+      <p class="b-subtitle">Projeção, tendência e sinal para 25 ativos · dados de <span id="stamp">—</span></p>
+    </div>
+    <select id="picker" aria-label="Escolher ativo"></select>
+  </header>
+
+  <div id="cards">
+    <div class="b-card m"><div class="b-label">Preço</div><div class="b-value b-num" id="c-price">—</div></div>
+    <div class="b-card m"><div class="b-label">Variação do dia</div><div class="b-value b-num" id="c-chg">—</div></div>
+    <div class="b-card m"><div class="b-label">Projeção 21 pregões</div><div class="b-value b-num" id="c-proj">—</div></div>
+    <div class="b-card m"><div class="b-label">Retorno projetado</div><div class="b-value b-num" id="c-ret">—</div></div>
+    <div class="b-card m"><div class="b-label">RSI 14</div><div class="b-value b-num" id="c-rsi">—</div></div>
+    <div class="b-card m"><div class="b-label">Volatilidade anual</div><div class="b-value b-num" id="c-vol">—</div></div>
+  </div>
+
+  <div class="two">
+    <section class="b-card">
+      <div class="b-label">Fechamento de 90 pregões e projeção de 21 pregões</div>
+      <div class="b-chart"><canvas id="chart"></canvas></div>
+    </section>
+    <section class="b-card">
+      <div class="b-label">Leitura do sinal</div>
+      <div id="signal"></div>
+    </section>
+  </div>
+
+  <section class="b-card">
+    <div class="b-label">Todos os ativos</div>
+    <div class="scroll"><table id="tbl">
+      <thead><tr><th>Ativo</th><th>Preço</th><th>Dia</th><th>RSI</th><th>Tendência</th><th>Projeção</th><th>Retorno</th><th>Sinal</th></tr></thead>
+      <tbody></tbody>
+    </table></div>
+    <div class="warn" id="warn"></div>
+  </section>
+
+  <p class="foot">
+    Projeção: regressão linear sobre o log do fechamento dos últimos 90 pregões, extrapolada por 21 pregões, com banda de ±1 desvio-padrão dos resíduos. Tendência: preço contra médias de 20 e 50 dias. RSI 14. Sinal soma esses fatores em uma nota de −4 a +4. Modelo estatístico sobre preço passado, sem garantia de resultado. Não é recomendação de compra ou venda. Fonte: brapi.dev.
+  </p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+<script>
+const ASSETS = [
+  {sym:"PETR4", frac:"APETR4F"},
+  {sym:"VALE3", frac:"AVALE3F"},
+  {sym:"TAEE4", frac:"ATAEE4F"},
+  {sym:"SUZB3", frac:"ASUZB3F"},
+  {sym:"SLCE3", frac:"ASLCE3F"},
+  {sym:"CMIG4", frac:"ACMIG4F"},
+  {sym:"LEVE3", frac:"ALEVE3F"},
+  {sym:"POMO3", frac:"APOMO3F"},
+  {sym:"USIM5", frac:"AUSIM5F"},
+  {sym:"CMIN3", frac:"ACMIN3"},
+  {sym:"BEES3", frac:"ABEES4F"},
+  {sym:"CURY3", frac:"ACURY3F"},
+  {sym:"ITUB4", frac:null},
+  {sym:"BBAS3", frac:null},
+  {sym:"WEGE3", frac:null},
+  {sym:"BBDC4", frac:null},
+  {sym:"B3SA3", frac:null},
+  {sym:"PRIO3", frac:null},
+  {sym:"ABEV3", frac:null},
+  {sym:"ITSA4", frac:null},
+  {sym:"BBSE3", frac:null},
+  {sym:"EGIE3", frac:null},
+  {sym:"RENT3", frac:null},
+  {sym:"RADL3", frac:null},
+  {sym:"LREN3", frac:null}
+];
+
+const $ = id => document.getElementById(id);
+const state = { rows:{}, sel:"PETR4", chart:null };
+
+const nf = (v,d=2) => v==null || !isFinite(v) ? "—" : v.toLocaleString("pt-BR",{minimumFractionDigits:d,maximumFractionDigits:d});
+
+function sma(a,n){
+  if(a.length < n) return null;
+  let s=0; for(let i=a.length-n;i<a.length;i++) s+=a[i];
+  return s/n;
+}
+function std(a){
+  if(a.length<2) return 0;
+  const m=a.reduce((x,y)=>x+y,0)/a.length;
+  return Math.sqrt(a.reduce((x,y)=>x+(y-m)*(y-m),0)/(a.length-1));
+}
+function rsi14(c,n=14){
+  if(c.length < n+1) return null;
+  let g=0,l=0;
+  for(let i=c.length-n;i<c.length;i++){
+    const d=c[i]-c[i-1];
+    if(d>=0) g+=d; else l-=d;
+  }
+  g/=n; l/=n;
+  if(l===0) return 100;
+  return 100 - 100/(1+g/l);
+}
+function projection(c,horizon=21,win=90){
+  const w = c.slice(-win);
+  const n = w.length;
+  if(n<20) return null;
+  const ys = w.map(v=>Math.log(v));
+  const mx = (n-1)/2;
+  const my = ys.reduce((a,b)=>a+b,0)/n;
+  let num=0, den=0;
+  for(let i=0;i<n;i++){ num += (i-mx)*(ys[i]-my); den += (i-mx)*(i-mx); }
+  const b = den ? num/den : 0;
+  const a = my - b*mx;
+  let ss=0;
+  for(let i=0;i<n;i++){ const r = ys[i]-(a+b*i); ss += r*r; }
+  const sd = Math.sqrt(ss/Math.max(1,n-2));
+  const target = Math.exp(a + b*(n-1+horizon));
+  return {
+    target,
+    upper: target*Math.exp(sd),
+    lower: target*Math.exp(-sd),
+    slopePct: (Math.exp(b*horizon)-1)*100,
+    fit: i => Math.exp(a+b*i),
+    a, b, n
+  };
+}
+function bizDays(from, count){
+  const out=[]; const d=new Date(from);
+  while(out.length<count){
+    d.setDate(d.getDate()+1);
+    const wd=d.getDay();
+    if(wd!==0 && wd!==6) out.push(new Date(d));
+  }
+  return out;
+}
+
+function metrics(arr){
+  const closes = arr.map(p=>p.close).filter(v=>v!=null);
+  if(closes.length<30) return null;
+  const last = closes[closes.length-1];
+  const prev = closes[closes.length-2] ?? last;
+  const chg = prev ? (last/prev-1)*100 : 0;
+  const s20 = sma(closes,20), s50 = sma(closes,50);
+  const r = rsi14(closes);
+  const pj = projection(closes);
+  const rets=[];
+  for(let i=Math.max(1,closes.length-252);i<closes.length;i++) rets.push(Math.log(closes[i]/closes[i-1]));
+  const vol = std(rets)*Math.sqrt(252)*100;
+  let peak=-Infinity, mdd=0;
+  closes.forEach(c=>{ peak=Math.max(peak,c); mdd=Math.min(mdd, c/peak-1); });
+  const high = Math.max(...closes.slice(-252));
+  const low = Math.min(...closes.slice(-252));
+
+  let score=0; const why=[];
+  if(s20!=null && s50!=null){
+    if(last>s20){ score++; why.push("preço acima da média de 20 dias"); }
+    else { score--; why.push("preço abaixo da média de 20 dias"); }
+    if(s20>s50){ score++; why.push("média curta acima da longa"); }
+    else { score--; why.push("média curta abaixo da longa"); }
+  }
+  if(r!=null){
+    if(r<30){ score++; why.push("RSI "+nf(r,0)+" em sobrevenda"); }
+    else if(r>70){ score--; why.push("RSI "+nf(r,0)+" em sobrecompra"); }
+    else why.push("RSI "+nf(r,0)+" em zona neutra");
+  }
+  if(pj){
+    if(pj.slopePct>0){ score++; why.push("inclinação positiva de "+nf(pj.slopePct,1)+"% no período"); }
+    else { score--; why.push("inclinação negativa de "+nf(pj.slopePct,1)+"% no período"); }
+  }
+  const signal = score>=2 ? "compra" : score<=-2 ? "venda" : "neutro";
+  const tone = score>=2 ? "up" : score<=-2 ? "down" : "mid";
+
+  return {arr, closes, last, chg, s20, s50, rsi:r, pj, vol, mdd, high, low, score, why, signal, tone};
+}
+
+function renderCards(m){
+  $("c-price").textContent = brapi.format.money(m.last);
+  $("c-chg").textContent = brapi.format.change(m.chg);
+  $("c-chg").className = "b-value b-num " + brapi.format.tone(m.chg);
+  $("c-proj").textContent = m.pj ? brapi.format.money(m.pj.target) : "—";
+  const ret = m.pj ? (m.pj.target/m.last-1)*100 : null;
+  $("c-ret").textContent = ret==null ? "—" : brapi.format.change(ret);
+  $("c-ret").className = "b-value b-num " + (ret==null ? "b-muted" : brapi.format.tone(ret));
+  $("c-rsi").textContent = m.rsi==null ? "—" : nf(m.rsi,0);
+  $("c-vol").textContent = nf(m.vol,1) + "%";
+}
+
+function renderSignal(sym, m){
+  const badge = `<span class="pill ${m.tone}">${m.signal.toUpperCase()}</span>`;
+  const band = m.pj ? `${brapi.format.money(m.pj.lower)} – ${brapi.format.money(m.pj.upper)}` : "—";
+  $("signal").innerHTML = `
+    <div class="rowline"><span class="b-muted">Ativo</span><span class="big">${sym}</span></div>
+    <div class="rowline"><span class="b-muted">Sinal</span><span>${badge} <span class="b-faint">nota ${m.score>0?"+":""}${m.score}</span></span></div>
+    <div class="rowline"><span class="b-muted">Tendência</span><span>${m.s20 && m.s50 ? (m.s20>m.s50?"alta":"baixa") : "—"}</span></div>
+    <div class="rowline"><span class="b-muted">Projeção 21 pregões</span><span class="b-num">${m.pj?brapi.format.money(m.pj.target):"—"}</span></div>
+    <div class="rowline"><span class="b-muted">Banda de ±1 desvio</span><span class="b-num b-faint">${band}</span></div>
+    <div class="rowline"><span class="b-muted">Faixa de 52 semanas</span><span class="b-num b-faint">${brapi.format.money(m.low)} – ${brapi.format.money(m.high)}</span></div>
+    <div class="rowline"><span class="b-muted">Queda máxima em 12 meses</span><span class="b-num b-down">${nf(m.mdd*100,1)}%</span></div>
+    <div class="rowline"><span class="b-muted">Fechamento mais recente</span><span class="b-faint">${brapi.format.date(m.arr[m.arr.length-1].date)}</span></div>
+    <ul style="margin:12px 0 0;padding-left:18px;font-size:12px;color:var(--muted);line-height:1.6">
+      ${m.why.map(t=>`<li>${t}</li>`).join("")}
+    </ul>`;
+}
+
+function renderChart(sym, m){
+  const hist = m.arr.slice(-90);
+  const labels = hist.map(p=>brapi.format.date(p.date));
+  const values = hist.map(p=>p.close);
+  const future = bizDays(new Date(m.arr[m.arr.length-1].date*1000), 21);
+  future.forEach(d=>labels.push(d.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"})));
+
+  const pv = new Array(values.length-1).fill(null);
+  pv.push(values[values.length-1]);
+  if(m.pj){
+    for(let h=1;h<=21;h++){
+      pv.push(m.pj.fit(m.pj.n-1+h));
+    }
+  }
+  const hv = values.concat(new Array(21).fill(null));
+  const c = brapi.colors();
+
+  if(state.chart) state.chart.destroy();
+  brapi.useChartTheme(Chart);
+  state.chart = new Chart($("chart"), {
+    type:"line",
+    data:{labels, datasets:[
+      {label:sym, data:hv, borderColor:c.accent, backgroundColor:"transparent", borderWidth:1.8, pointRadius:0, tension:.15},
+      {label:"projeção", data:pv, borderColor:c.up, borderWidth:1.6, borderDash:[5,4], pointRadius:0, tension:.15}
+    ]},
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      interaction:{mode:"index",intersect:false},
+      plugins:{legend:{display:true,labels:{boxWidth:10,font:{size:11}}},
+        tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${ctx.parsed.y==null?"—":brapi.format.money(ctx.parsed.y)}`}}},
+      scales:{
+        x:{ticks:{maxTicksLimit:7,font:{size:10}}},
+        y:{ticks:{callback:v=>nf(v,0),font:{size:10}}}
+      }
+    }
+  });
+}
+
+function renderTable(){
+  const tb = $("tbl").querySelector("tbody");
+  tb.innerHTML = ASSETS.map(a=>{
+    const m = state.rows[a.sym];
+    if(!m) return `<tr data-sym="${a.sym}" class="${a.sym===state.sel?"sel":""}">
+      <td><strong>${a.sym}</strong>${a.frac?` <span class="b-faint" style="font-size:11px">${a.frac}</span>`:""}</td>
+      <td colspan="7" class="b-faint" style="text-align:left">sem dados neste acesso</td></tr>`;
+    const ret = m.pj ? (m.pj.target/m.last-1)*100 : null;
+    return `<tr data-sym="${a.sym}" class="${a.sym===state.sel?"sel":""}">
+      <td><strong>${a.sym}</strong>${a.frac?` <span class="b-faint" style="font-size:11px">${a.frac}</span>`:""}</td>
+      <td class="b-num">${nf(m.last)}</td>
+      <td class="b-num ${brapi.format.tone(m.chg)}">${brapi.format.change(m.chg)}</td>
+      <td class="b-num">${m.rsi==null?"—":nf(m.rsi,0)}</td>
+      <td>${m.s20&&m.s50?(m.s20>m.s50?"alta":"baixa"):"—"}</td>
+      <td class="b-num">${m.pj?nf(m.pj.target):"—"}</td>
+      <td class="b-num ${ret==null?"b-muted":brapi.format.tone(ret)}">${ret==null?"—":brapi.format.change(ret)}</td>
+      <td><span class="pill ${m.tone}">${m.signal}</span></td></tr>`;
+  }).join("");
+
+  tb.querySelectorAll("tr[data-sym]").forEach(tr=>{
+    tr.addEventListener("click", ()=>{
+      const s = tr.getAttribute("data-sym");
+      if(!state.rows[s]) return;
+      state.sel = s;
+      $("picker").value = s;
+      renderTable();
+      paint();
+    });
+  });
+}
+
+function paint(){
+  const m = state.rows[state.sel];
+  if(!m) return;
+  renderCards(m);
+  renderSignal(state.sel, m);
+  renderChart(state.sel, m);
+}
+
+async function loadOne(a){
+  try{
+    const r = await brapi.get("/api/v2/stocks/historical", {symbols:a.sym, range:"1y", interval:"1d"});
+    const arr = r && r.results && r.results[0] && r.results[0].data && r.results[0].data.historicalDataPrice;
+    if(!arr || !arr.length) return null;
+    return metrics(arr.filter(p=>p && p.close!=null).sort((x,y)=>x.date-y.date));
+  }catch(e){ return null; }
+}
+
+(async function init(){
+  const picker = $("picker");
+  picker.innerHTML = ASSETS.map(a=>`<option value="${a.sym}">${a.sym}${a.frac?" · "+a.frac:""}</option>`).join("");
+  picker.value = state.sel;
+  picker.addEventListener("change", ()=>{ if(state.rows[picker.value]){ state.sel=picker.value; renderTable(); paint(); } else { picker.value = state.sel; } });
+
+  let loaded = 0;
+  for(const a of ASSETS){
+    const m = await loadOne(a);
+    if(m){ state.rows[a.sym] = m; loaded++; }
+  }
+
+  if(!state.rows[state.sel]){
+    const first = ASSETS.find(a=>state.rows[a.sym]);
+    if(first) state.sel = first.sym;
+  }
+
+  $("stamp").textContent = new Date().toLocaleString("pt-BR",{dateStyle:"short",timeStyle:"short"});
+  const missing = ASSETS.length - loaded;
+  $("warn").textContent = missing
+    ? `${missing} de ${ASSETS.length} ativos sem dados neste acesso. Entre na conta brapi para liberar os demais tickers.`
+    : "";
+
+  renderTable();
+  if(state.rows[state.sel]) paint();
+  else $("signal").innerHTML = '<p class="b-faint">Sem dados para montar o painel neste acesso.</p>';
+})();
+</script>
+</body>
+</html>
