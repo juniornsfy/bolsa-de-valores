@@ -48,16 +48,14 @@ Confira qual conta está ativa:
 ```
 gh auth status
 ```
-
-
+ 
 2. Remover uma conta do GitHub CLI
 Se você quiser desconectar a conta juniorjrfsn, execute:
 ```
 gh auth logout --hostname github.com --user juniorjfsny
 gh auth logout --hostname github.com --user juniorjrfsn
 ```
-
-
+ 
 Confirme a operação se o CLI solicitar.
 
 Atenção: isso remove a autenticação dessa conta no GitHub CLI, mas não necessariamente a desconecta do VS Code ou remove todas as credenciais armazenadas no Windows.
