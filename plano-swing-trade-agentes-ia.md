@@ -6,7 +6,15 @@
 
 As datas e os preços de compra/venda de cada ticker **dependem de cotações do dia**. Nesta sessão não consegui consultar cotações ao vivo, então não escrevi aqui datas fixas para PETR4, VALE3 etc. Elas ficariam desatualizadas ou inventadas.
 
-Em vez disso, o painel (`index.html` e `radar-de-ativos-projecoes-e-sinais.html`) calcula tudo com os dados reais quando você clica em **Atualizar dados**, e o botão **Exportar plano (.md)** gera a versão datada deste documento (tabela por ativo com entrada, alvo, stop e saída por tempo).
+Em vez disso, o painel ([index.html](./index.html) e [brapi-radar-de-ativos-projecoes-e-sinais.html](./brapi-radar-de-ativos-projecoes-e-sinais.html)) calcula cenários usando o histórico retornado pelo provedor depois que você clica em **Atualizar dados**. **Exportar plano (.md)** baixa uma fotografia datada da análise carregada, com tabela por ativo, entrada condicional, alvo, stop, saída por tempo e cenários. Este documento descreve a metodologia; não contém cotações atuais nem sinais fixos.
+
+## Leitura rápida do painel
+
+- O scanner e o gráfico do ativo selecionado aparecem lado a lado em telas maiores; em telas estreitas, são empilhados.
+- Use **Linha** para ver fechamentos e indicadores ou **Candles** para comparar abertura, máxima, mínima e fechamento. O gráfico mantém as médias e a faixa projetada.
+- Escolha o horizonte de 5 a 120 pregões (~1 semana a 6 meses). A análise usa o histórico selecionado, com até 5 anos conforme a cobertura do provedor.
+- Clique em uma linha do scanner ou em uma oportunidade para abrir o ativo e conferir consenso, datas estimadas, níveis, probabilidades e cenários adversos.
+- O eixo do gráfico preserva o dia de negociação em UTC (sem deslocar o candle para o dia anterior por causa do fuso horário), mostra o ano e posiciona as projeções depois do último candle disponível. Datas estimadas usam esse último pregão; fins de semana são ignorados, mas feriados da B3 e interrupções não. Se o histórico estiver atrasado, atualize os dados antes de interpretar as datas. Não use uma data isoladamente como ordem de compra ou venda.
 
 ## Os "agentes"
 
@@ -28,10 +36,10 @@ São módulos quantitativos determinísticos, não um modelo de linguagem. Cada 
 - **Entrada:** com consenso comprador, é o próximo pregão. Se RSI > 68 ou preço acima da banda superior, espera recuo até a MM20. Sem consenso comprador, mostra uma entrada condicional em recuo (banda inferior ou −1,5 ATR).
 - **Stop:** maior valor entre 2×ATR e 0,35×volatilidade diária×√(horizonte).
 - **Alvo:** 2R (o dobro da distância até o stop).
-- **Datas de entrada e de alvo:** mediana do dia de ocorrência em 700 a 1.500 trajetórias simuladas por reamostragem dos últimos 250 retornos diários. A data é um ponto central, não uma promessa; veja também a probabilidade exibida ao lado.
+- **Datas de entrada e de alvo:** mediana do dia de ocorrência em 700 a 1.500 trajetórias simuladas por reamostragem dos últimos 250 retornos diários. A data é um ponto central, não uma promessa; a entrada pode não ocorrer e o alvo pode nunca ser atingido. Confira as probabilidades exibidas ao lado.
 - **Saída por tempo:** último pregão do horizonte (1 semana = 5 pregões; 1 mês ≈ 20; 3 meses ≈ 60; 6 meses ≈ 120). Se nem alvo nem stop forem atingidos, encerrar a posição.
 - **Venda/redução:** com consenso vendedor, o painel indica o próximo pregão ou um repique até a MM20 (prazo de 5 pregões).
-- Datas pulam fins de semana, mas **não** consideram feriados da B3.
+- O calendário pula fins de semana, mas **não** considera feriados da B3. Confirme a sessão e a cotação no seu provedor antes de qualquer decisão.
 
 ## Piores cenários (estresse)
 
@@ -60,3 +68,5 @@ Para análises de meses, prefira histórico de 2 a 5 anos, para que o estresse i
 - A regressão e as médias descrevem tendência já ocorrida.
 - A probabilidade de alvo/stop usa fechamentos diários, não máximas e mínimas intradiárias.
 - Qualidade e atraso dos dados dependem do provedor (Yahoo Finance/TradingView).
+- Os módulos chamados de “agentes” são regras estatísticas determinísticas, não agentes autônomos nem modelos de IA generativa. Eles não consultam notícias, fundamentos ou eventos futuros.
+- As projeções são condicionais ao histórico e ao provedor carregados. Datas, preços, probabilidades e classificações mudam a cada atualização; não representam garantia de rentabilidade nem recomendação personalizada.
